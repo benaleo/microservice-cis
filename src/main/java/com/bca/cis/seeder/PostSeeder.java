@@ -22,14 +22,13 @@ public class PostSeeder {
     public void run() {
         Faker faker = new Faker();
 
-        Long totalUser = userRepository.count();
-        int countUser = totalUser.intValue();
-
         Post newPost = new Post();
         newPost.setId(null);
         newPost.setDescription(faker.lorem().sentence(10));
         newPost.setContent(faker.avatar().image());
         newPost.setPostAt(LocalDateTime.now());
+        newPost.setCreatedAt(LocalDateTime.now().minusSeconds(LocalDateTime.now().getSecond()));
+        newPost.setUpdatedAt(LocalDateTime.now());
         newPost.setUser(getUser(userRepository));
 
         postRepository.save(newPost);

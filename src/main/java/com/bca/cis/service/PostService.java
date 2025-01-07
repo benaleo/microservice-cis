@@ -6,6 +6,10 @@ import com.bca.cis.model.PostIndexResponse;
 import com.bca.cis.model.ResultPageResponseDTO;
 
 public interface PostService {
+    Long countPostJPA();
+
+//    Long countPostELK();
+
     ResultPageResponseDTO<PostIndexResponse> listDataPostIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 
     PostDetailResponse findDataById(String id);

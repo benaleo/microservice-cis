@@ -16,24 +16,28 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import com.bca.cis.util.PaginationUtil;
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class PostServiceImpl implements PostService {
 
     private PostRepository repository;
+//    private PostElasticRepository postElasticRepository;
+//
+    @Override
+    public Long countPostJPA() {
+        return repository.count();
+    }
+//
+//    @Override
+//    public Long countPostELK() {
+//        return postElasticRepository.count();
+//    }
 
     @Override
         public ResultPageResponseDTO<PostIndexResponse> listDataPostIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
@@ -111,6 +115,11 @@ public class PostServiceImpl implements PostService {
         dto.setId(data.getSecureId());
         dto.setDescription(data.getDescription());
         dto.setContent(data.getContent());
+
+        PostIndexResponse.PostOwner postOwner = new PostIndexResponse.PostOwner();
+        postOwner.setId(data.getUser().getSecureId());
+        postOwner.setName(data.getUser().getName());
+        dto.setPostOwner(postOwner);
         return dto;
     }
     private PostDetailResponse convertToDetailResponse(Post data) {

@@ -2,11 +2,8 @@ package com.bca.cis.controller;
 
 
 import com.bca.cis.exception.BadRequestException;
-import com.bca.cis.model.PaginationAppsResponse;
-import com.bca.cis.model.PostCreateUpdateRequest;
-import com.bca.cis.model.PostDetailResponse;
-import com.bca.cis.model.PostIndexResponse;
-import com.bca.cis.model.ResultPageResponseDTO;
+import com.bca.cis.model.*;
+import com.bca.cis.repository.PostRepository;
 import com.bca.cis.response.ApiDataResponse;
 import com.bca.cis.response.ApiResponse;
 import com.bca.cis.service.PostService;
@@ -27,7 +24,24 @@ import java.net.URI;
 public class PostController {
 
     static final String urlRoute = "/api/v1/post";
-    private PostService service;
+    private final PostService service;
+
+    @GetMapping("/count")
+    public ResponseEntity<TotalCountResponse> countPostJPA() {
+        // response true
+        log.info("GET " + urlRoute + "/count endpoint hit");
+        return ResponseEntity.ok().body(new TotalCountResponse(true, service.countPostJPA()));
+    }
+
+    @GetMapping("/count/elastic")
+    public ResponseEntity<TotalCountResponse> countPostELK() {
+        // response true
+        log.info("GET " + urlRoute + "/count/elastic endpoint hit");
+//        return ResponseEntity.ok().body(new TotalCountResponse(true, service.countPostELK()));
+        return null;
+    }
+
+
 
     @GetMapping
     public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostIndexResponse>>> listDataPostIndex(
