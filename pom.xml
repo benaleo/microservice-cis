@@ -99,7 +99,7 @@
             <version>1.18.1</version>
         </dependency>
 
-<!--        // ai translator-->
+        <!--        // ai translator-->
 
         <!-- https://mvnrepository.com/artifact/dev.langchain4j/langchain4j -->
         <dependency>
@@ -122,12 +122,45 @@
             <version>0.35.0</version>
             <scope>test</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.boot</groupId>-->
+        <!--            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>-->
+        <!--        </dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.google.zxing/core -->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.5.3</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.google.zxing/javase -->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>3.5.3</version>
+        </dependency>
+
+
+        <!--  Storage   -->
+        <dependency>
+            <groupId>bca</groupId>
+            <artifactId>hcp</artifactId>
+            <version>1.0.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/hcp/hcp.jar</systemPath>
+        </dependency>
     </dependencies>
+
+
 
 
 
@@ -137,6 +170,7 @@
                 <groupId>org.hibernate.orm.tooling</groupId>
                 <artifactId>hibernate-enhance-maven-plugin</artifactId>
                 <version>${hibernate.version}</version>
+
                 <executions>
                     <execution>
                         <id>enhance</id>
@@ -149,7 +183,9 @@
                             <enableAssociationManagement>true</enableAssociationManagement>
                         </configuration>
                     </execution>
+
                 </executions>
+
             </plugin>
 
         </plugins>

@@ -15,6 +15,4 @@ public class GetCISByDebitCardsResponse {
 
     private List<CISOrganizationResponse> cisOrganization = new ArrayList<>();
 
-
-
 }
