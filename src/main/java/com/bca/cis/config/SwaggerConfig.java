@@ -37,27 +37,27 @@ public class SwaggerConfig {
                 .servers(List.of(appServer));
     }
 
-    @Bean
-    public GroupedOpenApi eaiApi() {
-        return GroupedOpenApi.builder()
-                .group("EAI_API")
-                .pathsToMatch("/eai/**")
-                .build();
-    }
-
-    @Bean
-    public GroupedOpenApi appsApi() {
-        return GroupedOpenApi.builder()
-                .group("Apps_API")
-                .pathsToMatch("/api/**")
-                .build();
-    }
-
-    @Bean
-    public GroupedOpenApi cmsApi() {
-        return GroupedOpenApi.builder()
-                .group("CMS_API")
-                .pathsToMatch("/cms/**")
-                .build();
-    }
+//    @Bean
+//    public GroupedOpenApi eaiApi() {
+//        return GroupedOpenApi.builder()
+//                .group("EAI_API")
+//                .pathsToMatch("/eai/**")
+//                .build();
+//    }
+//
+//    @Bean
+//    public GroupedOpenApi appsApi() {
+//        return GroupedOpenApi.builder()
+//                .group("Apps_API")
+//                .pathsToMatch("/api/**")
+//                .build();
+//    }
+//
+//    @Bean
+//    public GroupedOpenApi cmsApi() {
+//        return GroupedOpenApi.builder()
+//                .group("CMS_API")
+//                .pathsToMatch("/cms/**")
+//                .build();
+//    }
 }
