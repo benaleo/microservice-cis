@@ -12,4 +12,6 @@ public interface CheckCustomerService {
     Object findAcctFactByNumber(String cardNumber);
 
     Object findInquiryCisRelations(String accountNo);
+
+    Object findInquiryMobileNumber(String customerNumber, String countryCd, String phone);
 }
