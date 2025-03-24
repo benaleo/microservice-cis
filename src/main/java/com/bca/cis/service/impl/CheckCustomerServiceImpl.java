@@ -2,15 +2,15 @@ package com.bca.cis.service.impl;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import com.bca.cis.entity.AppUser;
+import com.bca.cis.entity.MobileNumber;
 import com.bca.cis.entity.Otp;
+import com.bca.cis.enums.UserType;
 import com.bca.cis.exception.BadRequestException;
 import com.bca.cis.model.*;
 import com.bca.cis.repository.AppUserRepository;
+import com.bca.cis.repository.MobileNumberRepository;
 import com.bca.cis.repository.OtpRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,6 +31,7 @@ public class CheckCustomerServiceImpl implements CheckCustomerService {
     private final OtpRepository otpRepository;
     private final PasswordEncoder passwordEncoder;
     private final AppUserRepository appUserRepository;
+    private final MobileNumberRepository mobileNumberRepository;
 
     @Override
     public GetCISByDebitCardsResponse findDebitCards(String cardNumber) {
@@ -104,66 +105,77 @@ public class CheckCustomerServiceImpl implements CheckCustomerService {
 
         CIS data = checkCustomerRepository.findByMemberBankAccount(cardNumber);
 
-        Map<String, List<Map<String, Object>>> acct_data = new HashMap<String, List<Map<String, Object>>>();
-        List<Map<String, Object>> acct = List.of(
-                Map.of("acct_no", data.getMemberBankAccount(), "fact_type", "PF"),
-                Map.of("acct_no", "", "fact_type", ""),
-                Map.of("acct_no", "", "fact_type", ""),
-                Map.of("acct_no", "", "fact_type", ""),
-                Map.of("acct_no", "", "fact_type", "")
+        Map<String, List<Map<String, Object>>> acct_data = Map.of(
+                "acct", List.of(
+                        Map.of("acct_no", data.getMemberAccountNumber(), "fact_type", "PF"),
+                        Map.of("acct_no", "", "fact_type", ""),
+                        Map.of("acct_no", "", "fact_type", ""),
+                        Map.of("acct_no", "", "fact_type", ""),
+                        Map.of("acct_no", "", "fact_type", "")
+                )
         );
-        acct_data.put("acct", acct);
 
-        Map<String, Object> output = new HashMap<>();
-        output.put("return_code", "00");
-        output.put("card_no", data.getMemberBankAccount());
-        output.put("acct_data", acct_data);
-
-        return output;
+        return Map.of(
+                "return_code", "00",
+                "card_no", data.getMemberBankAccount(),
+                "acct_data", acct_data,
+                "branch_code", "6903",
+                "birth_date", data.getMemberBirthdate().format(DateTimeFormatter.ofPattern("ddMMyyyy"))
+        );
     }
 
     @Override
     public Object findInquiryCisRelations(String accountNo) {
 
+        CIS cis = Optional.ofNullable(checkCustomerRepository.findByMemberAccountNumber(accountNo)).orElseThrow(
+                () -> new BadRequestException("Account number not found")
+        );
+
         Map<String, Object> customer_master = Map.of(
-                "customer_no", accountNo,
-                "customer_name", "Diantdra",
-                "person_birthdate", "1990-01-01",
-                "membership", "SL"
+                "customer_no", cis.getMemberCin(),
+                "customer_name", cis.getName(),
+                "person_birthdate", cis.getMemberBirthdate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                "membership", cis.getMemberType().name()
         );
 
-        List<Map<String, Object>> relations_cust_to_cust = List.of(
-                Map.of("customer_no_1", "3", "customer_no_2", "4", "relation_code_1_2", "1", "relation_code_2_1", "2"),
-                Map.of("customer_no_1", "3", "customer_no_2", "4", "relation_code_1_2", "103", "relation_code_2_1", "105")
-        );
+        List<Map<String, Object>> relations_cust_to_cust;
+        if (cis.getMemberType().equals(UserType.NOT_MEMBER)) {
+            relations_cust_to_cust = List.of(
+                    Map.of("customer_no_1", cis.getMemberCin(), "customer_no_2", cis.getParentCin(), "relation_code_1_2", "1", "relation_code_2_1", "2"),
+                    Map.of("customer_no_1", cis.getMemberCin(), "customer_no_2", cis.getParentCin(), "relation_code_1_2", "103", "relation_code_2_1", "105")
+            );
+        } else {
+            relations_cust_to_cust = new ArrayList<>();
+        }
 
-        Map<String, Object> list_data = Map.of(
-                "customer_master", customer_master,
-                "relations_cust_to_cust", relations_cust_to_cust
+        return Map.<String, Object>of(
+                "get_by_account_no", Map.of(
+                        "list_data", List.of(Map.of(
+                                "customer_master", customer_master,
+                                "relations_cust_to_cust", relations_cust_to_cust
+                        ))
+                )
         );
-
-        Map<String, Object> getByAccountNo = Map.of(
-                "list_data", List.of(list_data)
-        );
-
-        Map<String, Object> output = Map.of(
-                "get_by_account_no", getByAccountNo
-        );
-
-        return output;
     }
 
     @Override
-    public Map<String, Object> findInquiryMobileNumber(String customerNumber, String countryCd, String phone) {
-        Map<String, Object> output = Map.of(
-                "cust_no", "00",
-                "status", "1",
-                "country_cd", countryCd,
-                "phone", phone,
-                "operator", "VIANNY PANGESA"
+    public List<Map<String, Object>> findInquiryMobileNumber(String customerNumber, String countryCd, String phone) {
+        CIS cis = Optional.ofNullable(checkCustomerRepository.findByMemberAccountNumber(customerNumber)).orElseThrow(
+                () -> new BadRequestException("Account number not found")
         );
 
-        return output;
+        List<MobileNumber> mobileNumbers = mobileNumberRepository.findByCis(cis);
+        List<Map<String, Object>> mapMobileNumbers = new ArrayList<>();
+        for (MobileNumber mobileNumber : mobileNumbers) {
+            mapMobileNumbers.add(Map.of(
+                    "phone", mobileNumber.getPhone(),
+                    "code", mobileNumber.getCode(),
+                    "status", mobileNumber.getStatus()
+            ));
+        }
+
+        return mapMobileNumbers;
+
     }
 
     @Override

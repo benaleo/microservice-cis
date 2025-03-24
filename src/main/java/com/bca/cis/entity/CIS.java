@@ -64,6 +64,9 @@ public class CIS extends AbstractBaseEntity implements SecureIdentifiable {
     @Column(name = "member_cin", length = 20)
     private String memberCin;
 
+    @Column(name = "member_account_number", length = 10)
+    private String memberAccountNumber;
+
     @Column(name = "member_birthdate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate memberBirthdate;
@@ -75,6 +78,9 @@ public class CIS extends AbstractBaseEntity implements SecureIdentifiable {
 
     @Column(name = "parent_cin", length = 20)
     private String parentCin;
+
+    @Column(name = "parent_account_number", length = 10)
+    private String parentAccountNumber;
 
     @Column(name = "parent_birthdate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

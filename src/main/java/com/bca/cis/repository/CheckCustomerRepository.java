@@ -12,4 +12,6 @@ public interface CheckCustomerRepository extends JpaRepository<CIS, Long> {
     boolean existsByMemberBankAccount(String cardNumber);
 
     CIS findByParentBankAccount(String cisCustomerNumber);
+
+    CIS findByMemberAccountNumber(String memberAccountNumber);
 }
