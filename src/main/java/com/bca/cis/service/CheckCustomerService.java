@@ -1,6 +1,7 @@
 package com.bca.cis.service;
 
 import com.bca.cis.model.GetCISByDebitCardsResponse;
+import com.bca.cis.model.OtpGenerateSingleRequest;
 
 public interface CheckCustomerService {
     GetCISByDebitCardsResponse findDebitCards(String cardNumber) throws Exception;
@@ -14,4 +15,6 @@ public interface CheckCustomerService {
     Object findInquiryCisRelations(String accountNo);
 
     Object findInquiryMobileNumber(String customerNumber, String countryCd, String phone);
+
+    Object generateOtpSingle(String product, String pan, OtpGenerateSingleRequest request);
 }

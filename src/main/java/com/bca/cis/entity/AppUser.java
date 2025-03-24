@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Table
 public class AppUser extends AbstractBaseEntity implements SecureIdentifiable {
 
@@ -28,4 +27,11 @@ public class AppUser extends AbstractBaseEntity implements SecureIdentifiable {
 
     @Column(name = "name")
     private String name;
+
+    public AppUser(String email, String username, String password, String name) {
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.name = name;
+    }
 }

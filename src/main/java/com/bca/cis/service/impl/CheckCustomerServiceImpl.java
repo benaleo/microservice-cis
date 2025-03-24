@@ -1,10 +1,18 @@
 package com.bca.cis.service.impl;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.bca.cis.entity.AppUser;
+import com.bca.cis.entity.Otp;
+import com.bca.cis.model.OtpGenerateSingleRequest;
+import com.bca.cis.repository.AppUserRepository;
+import com.bca.cis.repository.OtpRepository;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -22,6 +30,9 @@ import lombok.RequiredArgsConstructor;
 public class CheckCustomerServiceImpl implements CheckCustomerService {
 
     private final CheckCustomerRepository checkCustomerRepository;
+    private final OtpRepository otpRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AppUserRepository appUserRepository;
 
     @Override
     public GetCISByDebitCardsResponse findDebitCards(String cardNumber) {
@@ -145,8 +156,38 @@ public class CheckCustomerServiceImpl implements CheckCustomerService {
     }
 
 @Override
-public Object findInquiryMobileNumber(String customerNumber, String countryCd, String phone) {
+public Map<String, Object> findInquiryMobileNumber(String customerNumber, String countryCd, String phone) {
+        Map<String, Object> output = Map.of(
+                "cust_no", "00",
+                "status", "1",
+                "country_cd", countryCd,
+                "phone", phone,
+                "operator", "VIANNY PANGESA"
+        );
   
-        return null;
+        return output;
 }
+
+    @Override
+    public Object generateOtpSingle(String product, String pan, OtpGenerateSingleRequest request) {
+        Otp otp = new Otp();
+        String generate8RandomDigits = RandomStringUtils.randomAlphanumeric(8).toUpperCase();
+        otp.setOtp(generate8RandomDigits);
+        otp.setUser(appUserRepository.findById(2L).orElse(null));
+        otp.setExpiredAt(LocalDateTime.now().plusMinutes(5));
+        otpRepository.save(otp);
+
+        return Map.of(
+                "output_schema", Map.of(
+                        "otp_code", generate8RandomDigits,
+                        "message_reference_no", "DKNOTP08102100000011473",
+                        "pan", pan,
+                        "product", product,
+                        "reference_code", "00038621",
+                        "expired_date", LocalDateTime.now().plusMinutes(5).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                        "status", "SUCCESS",
+                        "counter", "1"
+                )
+        );
+    }
 }
