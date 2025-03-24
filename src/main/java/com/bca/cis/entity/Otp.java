@@ -23,6 +23,8 @@ public class Otp {
     @JoinColumn(name = "user_id")
     private AppUser user;
 
+    private Boolean isValid = false;
+
     private LocalDateTime createdAt;
     private LocalDateTime expiredAt;
 

@@ -8,7 +8,8 @@ import java.util.Map;
 
 import com.bca.cis.entity.AppUser;
 import com.bca.cis.entity.Otp;
-import com.bca.cis.model.OtpGenerateSingleRequest;
+import com.bca.cis.exception.BadRequestException;
+import com.bca.cis.model.*;
 import com.bca.cis.repository.AppUserRepository;
 import com.bca.cis.repository.OtpRepository;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -17,9 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
 import com.bca.cis.entity.CIS;
-import com.bca.cis.model.CISIndividuResponse;
-import com.bca.cis.model.GetCISByDebitCardsResponse;
-import com.bca.cis.model.GetRelationCheckResponse;
 import com.bca.cis.repository.CheckCustomerRepository;
 import com.bca.cis.service.CheckCustomerService;
 
@@ -155,8 +153,8 @@ public class CheckCustomerServiceImpl implements CheckCustomerService {
         return output;
     }
 
-@Override
-public Map<String, Object> findInquiryMobileNumber(String customerNumber, String countryCd, String phone) {
+    @Override
+    public Map<String, Object> findInquiryMobileNumber(String customerNumber, String countryCd, String phone) {
         Map<String, Object> output = Map.of(
                 "cust_no", "00",
                 "status", "1",
@@ -164,9 +162,9 @@ public Map<String, Object> findInquiryMobileNumber(String customerNumber, String
                 "phone", phone,
                 "operator", "VIANNY PANGESA"
         );
-  
+
         return output;
-}
+    }
 
     @Override
     public Object generateOtpSingle(String product, String pan, OtpGenerateSingleRequest request) {
@@ -175,19 +173,39 @@ public Map<String, Object> findInquiryMobileNumber(String customerNumber, String
         otp.setOtp(generate8RandomDigits);
         otp.setUser(appUserRepository.findById(2L).orElse(null));
         otp.setExpiredAt(LocalDateTime.now().plusMinutes(5));
+        otp.setIsValid(true);
         otpRepository.save(otp);
 
         return Map.of(
-                "output_schema", Map.of(
-                        "otp_code", generate8RandomDigits,
-                        "message_reference_no", "DKNOTP08102100000011473",
-                        "pan", pan,
-                        "product", product,
-                        "reference_code", "00038621",
-                        "expired_date", LocalDateTime.now().plusMinutes(5).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                        "status", "SUCCESS",
-                        "counter", "1"
-                )
+                "otp_code", generate8RandomDigits,
+                "message_reference_no", "DKNOTP08102100000011473",
+                "pan", pan,
+                "product", product,
+                "reference_code", "00038621",
+                "expired_date", LocalDateTime.now().plusMinutes(5).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                "status", "SUCCESS",
+                "counter", "1"
+        );
+    }
+
+    @Override
+    public Object verifyOtp(String product, String pan, OtpGenerateVerifyRequest request) {
+        Otp otp = otpRepository.findByOtp(request.getOtp()).orElseThrow(
+                () -> new BadRequestException("OTP not found")
+        );
+        otp.setIsValid(false);
+        otpRepository.save(otp);
+
+        return Map.of(
+                "otp_code", otp.getOtp(),
+                "phone_number", pan,
+                "pan", pan,
+                "product", product,
+                "email_address", "",
+                "reference_code", "00038621",
+                "expired_date", LocalDateTime.now().plusMinutes(5).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                "status", "SUCCESS",
+                "counter", "1"
         );
     }
 }
