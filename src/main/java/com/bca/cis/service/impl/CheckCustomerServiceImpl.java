@@ -12,6 +12,7 @@ import com.bca.cis.model.*;
 import com.bca.cis.repository.AppUserRepository;
 import com.bca.cis.repository.MobileNumberRepository;
 import com.bca.cis.repository.OtpRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CheckCustomerServiceImpl implements CheckCustomerService {
 
     private final CheckCustomerRepository checkCustomerRepository;
@@ -120,7 +122,7 @@ public class CheckCustomerServiceImpl implements CheckCustomerService {
                 "card_no", data.getMemberBankAccount(),
                 "acct_data", acct_data,
                 "branch_code", "6903",
-                "birth_date", data.getMemberBirthdate().format(DateTimeFormatter.ofPattern("ddMMyyyy"))
+                "birth_date", data.getMemberBirthdate().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
         );
     }
 
@@ -159,23 +161,27 @@ public class CheckCustomerServiceImpl implements CheckCustomerService {
     }
 
     @Override
-    public List<Map<String, Object>> findInquiryMobileNumber(String customerNumber, String countryCd, String phone) {
-        CIS cis = Optional.ofNullable(checkCustomerRepository.findByMemberAccountNumber(customerNumber)).orElseThrow(
+    public List<Map<String, Object>> findInquiryMobileNumber(String customerNumber) {
+        CIS cis = Optional.ofNullable(checkCustomerRepository.findByMemberCin(customerNumber)).orElseThrow(
                 () -> new BadRequestException("Account number not found")
         );
+        log.info("cis name : {}", cis.getName());
 
         List<MobileNumber> mobileNumbers = mobileNumberRepository.findByCis(cis);
+        log.info("size of mobile number : {}", mobileNumbers != null ? mobileNumbers.size() : 0);
+
         List<Map<String, Object>> mapMobileNumbers = new ArrayList<>();
-        for (MobileNumber mobileNumber : mobileNumbers) {
-            mapMobileNumbers.add(Map.of(
-                    "phone", mobileNumber.getPhone(),
-                    "code", mobileNumber.getCode(),
-                    "status", mobileNumber.getStatus()
-            ));
+        if (mobileNumbers != null && !mobileNumbers.isEmpty()) {
+            for (MobileNumber mobileNumber : mobileNumbers) {
+                mapMobileNumbers.add(Map.of(
+                        "phone", Optional.ofNullable(mobileNumber.getPhone()).orElse(""),
+                        "code", Optional.ofNullable(mobileNumber.getCode()).orElse("62"),
+                        "status", Optional.ofNullable(mobileNumber.getStatus()).orElse("")
+                ));
+            }
         }
 
         return mapMobileNumbers;
-
     }
 
     @Override

@@ -15,7 +15,7 @@ public interface CheckCustomerService {
 
     Object findInquiryCisRelations(String accountNo);
 
-    Object findInquiryMobileNumber(String customerNumber, String countryCd, String phone);
+    Object findInquiryMobileNumber(String customerNumber);
 
     Object generateOtpSingle(String product, String pan, OtpGenerateSingleRequest request);
 
