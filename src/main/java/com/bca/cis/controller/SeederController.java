@@ -35,17 +35,18 @@ public class SeederController {
 
     @GetMapping
     public ResponseEntity<String> seeder(@RequestParam Integer size) {
-        Faker faker = new Faker();
-
-        String[] memberType = {"SOLITAIRE", "PRIORITY", "NOT_MEMBER"};
-        UserType[] userType = {UserType.SL, UserType.PR};
-        String[] status = {"1", "2"};
-
-        long cardNumber = faker.number().randomNumber(16, true);
-        long cinNumber = faker.number().randomNumber(11, true);
-        long accountNumber = faker.number().randomNumber(10, true);
 
         for (int i = 0; i < size; i++) {
+            Faker faker = new Faker();
+
+            String[] memberType = {"SOLITAIRE", "PRIORITY", "NOT_MEMBER"};
+            UserType[] userType = {UserType.SL, UserType.PR};
+            String[] status = {"1", "2"};
+
+            long cardNumber = faker.number().randomNumber(16, true);
+            long cinNumber = faker.number().randomNumber(11, true);
+            long accountNumber = faker.number().randomNumber(10, true);
+
             CIS data = new CIS();
             data.setName(faker.name().fullName());
             data.setEmail(faker.internet().emailAddress());
