@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface OtpRepository extends JpaRepository<Otp, Long> {
     Optional<Otp> findByOtp(String otp);
+
+    Otp findByOtpAndPhone(String otp, String phone);
 }

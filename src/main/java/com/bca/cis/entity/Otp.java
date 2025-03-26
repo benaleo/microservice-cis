@@ -25,6 +25,9 @@ public class Otp {
 
     private Boolean isValid = false;
 
+    @Column(name = "phone")
+    private String phone;
+
     private LocalDateTime createdAt;
     private LocalDateTime expiredAt;
 

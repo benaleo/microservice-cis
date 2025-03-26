@@ -24,6 +24,8 @@ import com.bca.cis.service.CheckCustomerService;
 
 import lombok.RequiredArgsConstructor;
 
+import javax.swing.text.html.Option;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -187,11 +189,12 @@ public class CheckCustomerServiceImpl implements CheckCustomerService {
     @Override
     public Object generateOtpSingle(String product, String pan, OtpGenerateSingleRequest request) {
         Otp otp = new Otp();
-        String generate8RandomDigits = RandomStringUtils.randomAlphanumeric(8).toUpperCase();
+        String generate8RandomDigits = RandomStringUtils.randomNumeric(6).toUpperCase();
         otp.setOtp(generate8RandomDigits);
         otp.setUser(appUserRepository.findById(2L).orElse(null));
         otp.setExpiredAt(LocalDateTime.now().plusMinutes(5));
         otp.setIsValid(true);
+        otp.setPhone(pan);
         otpRepository.save(otp);
 
         return Map.of(
@@ -208,7 +211,7 @@ public class CheckCustomerServiceImpl implements CheckCustomerService {
 
     @Override
     public Object verifyOtp(String product, String pan, OtpGenerateVerifyRequest request) {
-        Otp otp = otpRepository.findByOtp(request.getOtp()).orElseThrow(
+        Otp otp = Optional.ofNullable(otpRepository.findByOtpAndPhone(request.getOtp(), pan)).orElseThrow(
                 () -> new BadRequestException("OTP not found")
         );
         otp.setIsValid(false);
