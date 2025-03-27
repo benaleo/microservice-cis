@@ -26,7 +26,6 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Aktifkan CORS
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll());
         return http.build();
@@ -53,22 +52,22 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(Arrays.asList(
-                "https://cms-byc2024.kelolain.id",  // Pastikan URL persis, tanpa trailing slash
-                "http://localhost:8080",
-                "http://localhost:8090"
-        ));
-        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Explicit method
-        corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type")); // Explicit headers
-        corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.setMaxAge(3600L); // Optional: Untuk preflight cache
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfiguration);
-        return source;
-    }
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration corsConfiguration = new CorsConfiguration();
+//        corsConfiguration.setAllowedOrigins(Arrays.asList(
+//                "https://cms-byc2024.kelolain.id",  // Pastikan URL persis, tanpa trailing slash
+//                "http://localhost:8080",
+//                "http://localhost:8090"
+//        ));
+//        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Explicit method
+//        corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type")); // Explicit headers
+//        corsConfiguration.setAllowCredentials(true);
+//        corsConfiguration.setMaxAge(3600L); // Optional: Untuk preflight cache
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", corsConfiguration);
+//        return source;
+//    }
 
 }
