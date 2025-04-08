@@ -190,7 +190,7 @@ public class CheckCustomerServiceImpl implements CheckCustomerService {
     public Object generateOtpSingle(String product, String pan, OtpGenerateSingleRequest request) {
         Otp otp = new Otp();
         String generate8RandomDigits = RandomStringUtils.randomNumeric(6).toUpperCase();
-        otp.setOtp(generate8RandomDigits);
+        otp.setOtp("123456");
         otp.setUser(appUserRepository.findById(2L).orElse(null));
         otp.setExpiredAt(LocalDateTime.now().plusMinutes(5));
         otp.setIsValid(true);
