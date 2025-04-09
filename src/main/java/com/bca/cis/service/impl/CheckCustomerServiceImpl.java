@@ -189,7 +189,7 @@ public class CheckCustomerServiceImpl implements CheckCustomerService {
     @Override
     public Object generateOtpSingle(String product, String pan, OtpGenerateSingleRequest request) {
         Otp otp = new Otp();
-        String generate8RandomDigits = RandomStringUtils.randomNumeric(6).toUpperCase();
+//        String generate8RandomDigits = RandomStringUtils.randomNumeric(6).toUpperCase();
         otp.setOtp("123456");
         otp.setUser(appUserRepository.findById(2L).orElse(null));
         otp.setExpiredAt(LocalDateTime.now().plusMinutes(5));
@@ -198,7 +198,7 @@ public class CheckCustomerServiceImpl implements CheckCustomerService {
         otpRepository.save(otp);
 
         return Map.of(
-                "otp_code", generate8RandomDigits,
+                "otp_code", "123456",
                 "message_reference_no", "DKNOTP08102100000011473",
                 "pan", pan,
                 "product", product,
