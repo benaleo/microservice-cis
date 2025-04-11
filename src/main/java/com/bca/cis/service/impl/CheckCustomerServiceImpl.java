@@ -13,7 +13,6 @@ import com.bca.cis.repository.AppUserRepository;
 import com.bca.cis.repository.MobileNumberRepository;
 import com.bca.cis.repository.OtpRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -23,8 +22,6 @@ import com.bca.cis.repository.CheckCustomerRepository;
 import com.bca.cis.service.CheckCustomerService;
 
 import lombok.RequiredArgsConstructor;
-
-import javax.swing.text.html.Option;
 
 @Service
 @RequiredArgsConstructor
@@ -211,14 +208,17 @@ public class CheckCustomerServiceImpl implements CheckCustomerService {
 
     @Override
     public Object verifyOtp(String product, String pan, OtpGenerateVerifyRequest request) {
-        Otp otp = Optional.ofNullable(otpRepository.findByOtpAndPhone(request.getOtp(), pan)).orElseThrow(
-                () -> new BadRequestException("OTP not found")
-        );
-        otp.setIsValid(false);
-        otpRepository.save(otp);
+        List<Otp> otp = otpRepository.findAllByOtpAndPhoneOrderByIdDesc(request.getOtp(), pan);
+
+        if (otp.isEmpty()) {
+            throw new BadRequestException("OTP not found");
+        }
+        Otp lastOtp = otp.getFirst();
+        lastOtp.setIsValid(false);
+        otpRepository.save(lastOtp);
 
         return Map.of(
-                "otp_code", otp.getOtp(),
+                "otp_code", lastOtp.getOtp(),
                 "phone_number", pan,
                 "pan", pan,
                 "product", product,
