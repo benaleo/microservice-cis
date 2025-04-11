@@ -13,5 +13,5 @@ public interface OtpRepository extends JpaRepository<Otp, Long> {
 
     Otp findByOtpAndPhone(String otp, String phone);
 
-    List<Otp> findAllByOtpAndPhoneOrderByIdDesc(String otp, String pan);
+    List<Otp> findAllByOtpAndPhoneAndIsValidIsTrueOrderByIdDesc(String otp, String pan);
 }

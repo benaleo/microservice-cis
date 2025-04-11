@@ -208,7 +208,7 @@ public class CheckCustomerServiceImpl implements CheckCustomerService {
 
     @Override
     public Object verifyOtp(String product, String pan, OtpGenerateVerifyRequest request) {
-        List<Otp> otp = otpRepository.findAllByOtpAndPhoneOrderByIdDesc(request.getOtp(), pan);
+        List<Otp> otp = otpRepository.findAllByOtpAndPhoneAndIsValidIsTrueOrderByIdDesc(request.getOtp(), pan);
 
         if (otp.isEmpty()) {
             throw new BadRequestException("OTP not found");
