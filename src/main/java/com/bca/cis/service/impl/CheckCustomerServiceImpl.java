@@ -185,6 +185,7 @@ public class CheckCustomerServiceImpl implements CheckCustomerService {
 
     @Override
     public Object generateOtpSingle(String product, String pan, OtpGenerateSingleRequest request) {
+        otpRepository.updateExistingToIsValidFalse(pan);
         Otp otp = new Otp();
 //        String generate8RandomDigits = RandomStringUtils.randomNumeric(6).toUpperCase();
         otp.setOtp("123456");
