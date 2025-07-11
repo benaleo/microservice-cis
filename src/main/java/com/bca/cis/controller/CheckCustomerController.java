@@ -28,7 +28,7 @@ public class CheckCustomerController {
     public ResponseEntity<?> DebitCardsChecks(
             @PathVariable("card-number") String cardNumber,
             @RequestParam(name = "function-code", defaultValue = "10") Integer functionCode,
-            @RequestHeader(name = "Auth") String Authorization
+            @RequestHeader(name = "Authorization-u") String Authorization
     ) {
 
         try {
@@ -36,7 +36,7 @@ public class CheckCustomerController {
                 throw new RuntimeException("Error function code is not presents");
             }
 
-            if (!Objects.equals(Authorization, authToken)) {
+            if (!Objects.equals(Authorization, "Bearer " + authToken)) {
                 throw new RuntimeException("No authorization with this token");
             }
 
@@ -58,7 +58,7 @@ public class CheckCustomerController {
             @PathVariable("application-code") String applicationCode,
             @PathVariable("account-number") String accountNumber,
             @RequestParam(name = "function-code", defaultValue = "10") Integer functionCode,
-            @RequestHeader(name = "Auth") String Authorization
+            @RequestHeader(name = "Authorization-u") String Authorization
     ) {
 
         try {
@@ -66,7 +66,7 @@ public class CheckCustomerController {
                 throw new RuntimeException("Error function code is not presents");
             }
 
-            if (!Objects.equals(Authorization, authToken)) {
+            if (!Objects.equals(Authorization, "Bearer " + authToken)) {
                 throw new RuntimeException("No authorization with this token");
             }
 
@@ -86,11 +86,11 @@ public class CheckCustomerController {
     @GetMapping("/eai/channel-products/api/customers")
     public ResponseEntity<?> RelationChecks(
             @RequestParam(name = "cis-custno ", defaultValue = "1112223334") String cisCustomerNumber,
-            @RequestHeader(name = "Auth") String Authorization
+            @RequestHeader(name = "Authorization-u") String Authorization
     ) {
 
         try {
-            if (!Objects.equals(Authorization, authToken)) {
+            if (!Objects.equals(Authorization, "Bearer " + authToken)) {
                 throw new RuntimeException("No authorization with this token");
             }
 

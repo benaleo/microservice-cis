@@ -12,6 +12,7 @@ import com.bca.cis.model.*;
 import com.bca.cis.repository.AppUserRepository;
 import com.bca.cis.repository.MobileNumberRepository;
 import com.bca.cis.repository.OtpRepository;
+import com.bca.cis.response.ApiBcaResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,13 +37,17 @@ public class CheckCustomerServiceImpl implements CheckCustomerService {
 
     @Override
     public GetCISByDebitCardsResponse findDebitCards(String cardNumber) {
-        if (!checkCustomerRepository.existsByMemberBankAccount(cardNumber)) {
-            throw new HttpClientErrorException(
-                    org.springframework.http.HttpStatus.BAD_REQUEST,
-                    "Card number not found");
-        }
+//        if (!checkCustomerRepository.existsByMemberBankAccount(cardNumber)) {
+//            throw new HttpClientErrorException(
+//                    org.springframework.http.HttpStatus.BAD_REQUEST,
+//                    "Card number not found");
+//        }
 
-        CIS data = checkCustomerRepository.findByMemberBankAccount(cardNumber);
+        CIS data = checkCustomerRepository.findByMemberBankAccount(cardNumber).orElse(null);
+
+        if (data == null) {
+            throw new BadRequestException("Card number not found");
+        }
 
         GetCISByDebitCardsResponse response = new GetCISByDebitCardsResponse();
         CISIndividuResponse cisIndividu = new CISIndividuResponse();
@@ -98,13 +103,16 @@ public class CheckCustomerServiceImpl implements CheckCustomerService {
 
     @Override
     public Object findAcctFactByNumber(String cardNumber) {
-        if (!checkCustomerRepository.existsByMemberBankAccount(cardNumber)) {
-            throw new HttpClientErrorException(
-                    org.springframework.http.HttpStatus.BAD_REQUEST,
-                    "Card number not found");
-        }
+//        if (!checkCustomerRepository.existsByMemberBankAccount(cardNumber)) {
+//            throw new HttpClientErrorException(
+//                    org.springframework.http.HttpStatus.BAD_REQUEST,
+//                    "Card number not found");
+//        }
 
-        CIS data = checkCustomerRepository.findByMemberBankAccount(cardNumber);
+        CIS data = checkCustomerRepository.findByMemberBankAccount(cardNumber).orElse(null);
+        if (data == null) {
+            throw new BadRequestException("Card number not found");
+        }
 
         Map<String, List<Map<String, Object>>> acct_data = Map.of(
                 "acct", List.of(
