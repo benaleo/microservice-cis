@@ -19,7 +19,7 @@ public class ApiBcaController {
         return bcaApiService.getBCAData();
     }
 
-    @PostMapping("/api/sso-api-bca/auth/realms/3scaledev/protocol/openid-connect/token")
+    @PostMapping("/auth/realms/3scale-dev/protocol/openid-connect/token")
     public ResponseEntity<?> getTokenSSO(@RequestHeader(required = false) String clientID, @RequestHeader(required = false) String clientSecret){
 
         try{
