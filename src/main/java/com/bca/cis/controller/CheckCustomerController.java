@@ -28,7 +28,7 @@ public class CheckCustomerController {
     public ResponseEntity<?> DebitCardsChecks(
             @PathVariable("card-number") String cardNumber,
             @RequestParam(name = "function-code", defaultValue = "10") Integer functionCode,
-            @RequestHeader(name = "Authorization-u") String Authorization
+            @RequestHeader(name = "Auth") String Authorization
     ) {
 
         try {
@@ -86,7 +86,7 @@ public class CheckCustomerController {
     @GetMapping("/eai/channel-products/api/customers")
     public ResponseEntity<?> RelationChecks(
             @RequestParam(name = "cis-custno ", defaultValue = "1112223334") String cisCustomerNumber,
-            @RequestHeader(name = "Authorization-u") String Authorization
+            @RequestHeader(name = "Auth") String Authorization
     ) {
 
         try {
